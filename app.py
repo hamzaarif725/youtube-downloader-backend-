@@ -1,10 +1,16 @@
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file, redirect
 from flask_cors import CORS
 import yt_dlp
 import os
 
 app = Flask(__name__)
 CORS(app)  # ✅ Enables CORS for frontend communication
+
+# ✅ Force HTTPS by redirecting HTTP requests
+@app.before_request
+def before_request():
+    if request.url.startswith('http://'):
+        return redirect(request.url.replace('http://', 'https://', 301))
 
 # ✅ Create downloads folder if not exists
 DOWNLOAD_FOLDER = "downloads"
@@ -13,7 +19,7 @@ if not os.path.exists(DOWNLOAD_FOLDER):
 
 @app.route("/")
 def home():
-    return "🚀 Flask backend is running!"
+    return "🚀 Flask backend is running with HTTPS!"
 
 # 📌 Route to get video info from YouTube
 @app.route("/get_video_info", methods=["POST"])
