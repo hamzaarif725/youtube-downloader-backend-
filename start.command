@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# ✅ Update package lists and install ffmpeg
-apt-get update && apt-get install -y ffmpeg
+# ✅ Install ffmpeg using Nix (compatible with Railway)
+nix-env -iA nixpkgs.ffmpeg
 
-# ✅ Start Gunicorn (Flask Server)
+# ✅ Start the Flask server using Gunicorn
 gunicorn -w 4 -b 0.0.0.0:$PORT app:app
