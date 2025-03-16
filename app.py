@@ -1,21 +1,19 @@
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
-from flask_talisman import Talisman  # Forces HTTPS
 import yt_dlp
 import os
 
 app = Flask(__name__)
-Talisman(app)  # 🚀 Forces HTTPS for security
-CORS(app)  # Enables Cross-Origin Requests for Frontend Communication
+CORS(app)  # ✅ Enables CORS for frontend communication
 
-# Directory for storing downloaded videos
+# ✅ Create downloads folder if not exists
 DOWNLOAD_FOLDER = "downloads"
 if not os.path.exists(DOWNLOAD_FOLDER):
     os.makedirs(DOWNLOAD_FOLDER)
 
 @app.route("/")
 def home():
-    return "🚀 Flask backend is running with HTTPS enforced!"
+    return "🚀 Flask backend is running!"
 
 # 📌 Route to get video info from YouTube
 @app.route("/get_video_info", methods=["POST"])
