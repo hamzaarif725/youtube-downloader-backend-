@@ -5,11 +5,13 @@ import os
 import shutil  # ✅ Used to check if ffmpeg is installed
 
 app = Flask(__name__)
-CORS(app)  # ✅ Enables CORS for frontend communication
+CORS(app)  # ✅ Enables frontend-backend communication
 
 # ✅ Check if ffmpeg is installed
-if not shutil.which("ffmpeg"):
-    print("⚠ WARNING: ffmpeg not found. The downloaded format may not be the best available.")
+if shutil.which("ffmpeg"):
+    print("✅ ffmpeg is installed and available!")
+else:
+    print("⚠ WARNING: ffmpeg not found! The downloaded format may not be the best available.")
 
 # ✅ Create downloads folder if not exists
 DOWNLOAD_FOLDER = "downloads"
@@ -65,7 +67,8 @@ def download_video():
             "format": "bestvideo+bestaudio/best",
             "outtmpl": file_path,
             "merge_output_format": "mp4",
-            "quiet": True,
+            "quiet": False,  # ✅ Show logs for debugging
+            "ffmpeg_location": "/usr/bin/ffmpeg"  # ✅ Force yt-dlp to use ffmpeg
         }
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -74,7 +77,7 @@ def download_video():
         return send_file(file_path, as_attachment=True)
 
     except Exception as e:
-        print(f"Error downloading video: {str(e)}")  # ✅ Log the error
+        print(f"❌ ERROR: {str(e)}")  # ✅ Log the error
         return jsonify({"error": str(e)}), 500
 
 # Run the Flask app
