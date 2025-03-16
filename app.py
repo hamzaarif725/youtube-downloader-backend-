@@ -1,16 +1,15 @@
-from flask import Flask, request, jsonify, send_file, redirect
+from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import yt_dlp
 import os
+import shutil  # ✅ Used to check if ffmpeg is installed
 
 app = Flask(__name__)
 CORS(app)  # ✅ Enables CORS for frontend communication
 
-# ✅ Force HTTPS by redirecting HTTP requests
-@app.before_request
-def before_request():
-    if request.url.startswith('http://'):
-        return redirect(request.url.replace('http://', 'https://', 301))
+# ✅ Check if ffmpeg is installed
+if not shutil.which("ffmpeg"):
+    print("⚠ WARNING: ffmpeg not found. The downloaded format may not be the best available.")
 
 # ✅ Create downloads folder if not exists
 DOWNLOAD_FOLDER = "downloads"
@@ -19,7 +18,7 @@ if not os.path.exists(DOWNLOAD_FOLDER):
 
 @app.route("/")
 def home():
-    return "🚀 Flask backend is running with HTTPS!"
+    return "🚀 Flask backend is running with ffmpeg check!"
 
 # 📌 Route to get video info from YouTube
 @app.route("/get_video_info", methods=["POST"])
@@ -75,6 +74,7 @@ def download_video():
         return send_file(file_path, as_attachment=True)
 
     except Exception as e:
+        print(f"Error downloading video: {str(e)}")  # ✅ Log the error
         return jsonify({"error": str(e)}), 500
 
 # Run the Flask app
